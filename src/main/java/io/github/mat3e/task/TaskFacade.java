@@ -11,20 +11,24 @@ import javax.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
 import io.github.mat3e.project.query.SimpleProjectQueryDto;
+import io.github.mat3e.task.dto.TaskWithChangesDto;
 
 @Service
 public class TaskFacade {
     private final TaskFactory taskFactory;
     private final TaskRepository taskRepository;
+    private final TaskQueryRepository taskQueryRepository;
 
-    TaskFacade(TaskFactory taskFactory, TaskRepository taskRepository) {
+    TaskFacade(final TaskFactory taskFactory, final TaskRepository taskRepository,
+            final TaskQueryRepository taskQueryRepository) {
         this.taskFactory = taskFactory;
         this.taskRepository = taskRepository;
+        this.taskQueryRepository = taskQueryRepository;
     }
 
     @PostConstruct
     void init() {
-        if (this.taskRepository.count() == 0) {
+        if (this.taskQueryRepository.count() == 0) {
             var task = new Task("Example task", ZonedDateTime.now(), null);
             this.taskRepository.save(task);
         }
@@ -39,7 +43,7 @@ public class TaskFacade {
     }
 
     public boolean areUndoneTasksWithProjectId(int projectId) {
-        return this.taskRepository.existsByDoneIsFalseAndProject_Id(projectId);
+        return this.taskQueryRepository.existsByDoneIsFalseAndProject_Id(projectId);
     }
 
     TaskDto save(TaskDto toSave) {
@@ -64,14 +68,8 @@ public class TaskFacade {
     }
 
     List<TaskDto> list() {
-        return taskRepository.findAll().stream()
+        return taskQueryRepository.findAll().stream()
                 .map(Task::convertToDto)
-                .collect(toList());
-    }
-
-    List<TaskWithChangesDto> listWithChanges() {
-        return taskRepository.findAll().stream()
-                .map(TaskWithChangesDto::new)
                 .collect(toList());
     }
 

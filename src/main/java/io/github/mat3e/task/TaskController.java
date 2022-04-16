@@ -5,14 +5,19 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
+
+import io.github.mat3e.task.dto.TaskWithChangesDto;
 
 @RestController
 @RequestMapping("/tasks")
 class TaskController {
     private final TaskFacade taskFacade;
+    private final TaskQueryRepository taskQueryRepository;
 
-    public TaskController(TaskFacade taskFacade) {
+    TaskController(TaskFacade taskFacade, final TaskQueryRepository taskQueryRepository) {
         this.taskFacade = taskFacade;
+        this.taskQueryRepository = taskQueryRepository;
     }
 
     @GetMapping
@@ -21,8 +26,8 @@ class TaskController {
     }
 
     @GetMapping(params = "changes")
-    List<TaskWithChangesDto> listWithChanges() {
-        return taskFacade.listWithChanges();
+    Set<TaskWithChangesDto> listWithChanges() {
+        return this.taskQueryRepository.findBy(TaskWithChangesDto.class);
     }
 
     @GetMapping("/{id}")

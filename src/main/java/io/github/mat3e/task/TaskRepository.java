@@ -1,10 +1,19 @@
 package io.github.mat3e.task;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
-interface TaskRepository extends JpaRepository<Task, Integer> {
+import org.springframework.data.repository.Repository;
 
-    boolean existsByDoneIsFalseAndProject_Id(int id);
+interface TaskRepository extends Repository<Task, Integer> {
+
+    Optional<Task> findById(Integer id);
+
+    Task save(Task task);
+
+    List<Task> saveAll(Iterable<Task> task);
+//    <S extends Task> List<S> saveAll(Iterable<S> entities);
+
+    void deleteById(Integer id);
 }
