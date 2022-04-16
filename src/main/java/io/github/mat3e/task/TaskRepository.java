@@ -6,5 +6,5 @@ import java.util.List;
 
 interface TaskRepository extends JpaRepository<Task, Integer> {
 
-    boolean existsByDoneIsFalseANdProject_Id(int id);
+    boolean existsByDoneIsFalseAndProject_Id(int id);
 }

@@ -13,7 +13,6 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Service;
 
-import io.github.mat3e.task.Task;
 import io.github.mat3e.task.TaskDto;
 import io.github.mat3e.task.TaskFacade;
 
@@ -107,15 +106,14 @@ class ProjectFacade {
         if (taskFacade.areUndoneTasksWithProjectId(projectId)) {
             throw new IllegalStateException("There are still some undone tasks from a previous project instance!");
         }
-        List<Task> projectTasks = projectRepository.findById(projectId).stream()
-                .flatMap(project -> project.getSteps().stream()
-                        .map(step -> new Task(
-                                        step.getDescription(),
-                                        projectDeadline.plusDays(step.getDaysToProjectDeadline()),
-                                        project
-                                )
-                        )
-                ).collect(toList());
-        return taskFacade.saveAll(projectTasks);
+        return projectRepository.findById(projectId).map(project -> {
+                    List<TaskDto> collect = project.getSteps().stream()
+                                    .map(step -> TaskDto.builder()
+                                            .description(step.getDescription())
+                                            .deadline(projectDeadline.plusDays(step.getDaysToProjectDeadline()))
+                                            .build()).collect(toList());
+                            return taskFacade.saveAll(collect, project);
+                        }
+                ).orElseThrow(() -> new IllegalArgumentException("No project found with id: " + projectId));
     }
 }

@@ -5,17 +5,20 @@ import org.springframework.stereotype.Service;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
 import javax.annotation.PostConstruct;
 
+import io.github.mat3e.project.Project;
+
 @Service
 public class TaskFacade {
+    private final TaskFactory taskFactory;
     private final TaskRepository taskRepository;
 
-    TaskFacade(TaskRepository taskRepository) {
+    TaskFacade(TaskFactory taskFactory, TaskRepository taskRepository) {
+        this.taskFactory = taskFactory;
         this.taskRepository = taskRepository;
     }
 
@@ -27,35 +30,42 @@ public class TaskFacade {
         }
     }
 
+    public List<TaskDto> saveAll(final List<TaskDto> taskDtos, Project project) {
+
+        List<Task> tasks = taskDtos.stream().map(taskDto -> taskFactory.from(taskDto, project)).collect(toList());
+        List<Task> persistedTasks = taskRepository.saveAll(tasks);
+
+        return persistedTasks.stream().map(Task::convertToDto).collect(toList());
+    }
+
     public boolean areUndoneTasksWithProjectId(int projectId) {
-        return this.taskRepository.existsByDoneIsFalseANdProject_Id(projectId);
+        return this.taskRepository.existsByDoneIsFalseAndProject_Id(projectId);
     }
 
     TaskDto save(TaskDto toSave) {
-        return new TaskDto(
-                taskRepository.save(
-                        taskRepository.findById(toSave.getId())
-                                .map(existingTask -> {
-                                    if (existingTask.isDone() != toSave.isDone()) {
-                                        existingTask.setChangesCount(existingTask.getChangesCount() + 1);
-                                        existingTask.setDone(toSave.isDone());
-                                    }
-                                    existingTask.setAdditionalComment(toSave.getAdditionalComment());
-                                    existingTask.setDeadline(toSave.getDeadline());
-                                    existingTask.setDescription(toSave.getDescription());
-                                    return existingTask;
-                                }).orElseGet(() -> {
-                            var result = new Task(toSave.getDescription(), toSave.getDeadline(), null);
-                            result.setAdditionalComment(toSave.getAdditionalComment());
-                            return result;
-                        })
-                )
-        );
+
+        Task foundTask = taskRepository.findById(toSave.getId())
+                .map(existingTask -> {
+                    if (existingTask.isDone() != toSave.isDone()) {
+                        existingTask.setChangesCount(existingTask.getChangesCount() + 1);
+                        existingTask.setDone(toSave.isDone());
+                    }
+                    existingTask.setAdditionalComment(toSave.getAdditionalComment());
+                    existingTask.setDeadline(toSave.getDeadline());
+                    existingTask.setDescription(toSave.getDescription());
+                    return existingTask;
+                }).orElseGet(() -> {
+                    var result = new Task(toSave.getDescription(), toSave.getDeadline(), null);
+                    result.setAdditionalComment(toSave.getAdditionalComment());
+                    return result;
+                });
+        Task savedTask = taskRepository.save(foundTask);
+        return savedTask.convertToDto();
     }
 
     List<TaskDto> list() {
         return taskRepository.findAll().stream()
-                .map(TaskDto::new)
+                .map(Task::convertToDto)
                 .collect(toList());
     }
 
@@ -66,16 +76,10 @@ public class TaskFacade {
     }
 
     Optional<TaskDto> get(int id) {
-        return taskRepository.findById(id).map(TaskDto::new);
+        return taskRepository.findById(id).map(Task::convertToDto);
     }
 
     void delete(int id) {
         taskRepository.deleteById(id);
-    }
-
-    public List<TaskDto> saveAll(final List<Task> tasks) {
-        List<Task> persistedTasks = taskRepository.saveAll(tasks);
-
-        return persistedTasks.stream().map(TaskDto::new).collect(toList());
     }
 }

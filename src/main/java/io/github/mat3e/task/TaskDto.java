@@ -1,64 +1,100 @@
 package io.github.mat3e.task;
 
-import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
+import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+
+@JsonDeserialize(builder = TaskDto.Builder.class)
 public class TaskDto {
     private int id;
     @NotNull
-    private String description;
-    private boolean done;
-    private ZonedDateTime deadline;
-    private String additionalComment;
+    private final String description;
+    private final boolean done;
+    private final ZonedDateTime deadline;
+    private final String additionalComment;
 
-    public TaskDto() {
+    private TaskDto(Builder builder) {
+        this.id = builder.id;
+        this.description = builder.description;
+        this.done = builder.done;
+        this.deadline = builder.deadline;
+        this.additionalComment = builder.additionalComment;
     }
 
-    public TaskDto(Task source) {
-        id = source.getId();
-        description = source.getDescription();
-        done = source.isDone();
-        deadline = source.getDeadline();
-        additionalComment = source.getAdditionalComment();
+    public Builder toBuilder() {
+        return builder()
+                .id(this.id)
+                .description(this.description)
+                .done(this.done)
+                .deadline(this.deadline)
+                .additionalComment(this.additionalComment);
     }
 
     public int getId() {
-        return id;
+        return this.id;
     }
-
-    public void setId(int id) {
-        this.id = id;
+    public static Builder builder() {
+        return new Builder();
     }
 
     public String getDescription() {
         return description;
     }
 
-    void setDescription(String description) {
-        this.description = description;
-    }
-
     public boolean isDone() {
         return done;
-    }
-
-    void setDone(boolean done) {
-        this.done = done;
     }
 
     public ZonedDateTime getDeadline() {
         return deadline;
     }
 
-    void setDeadline(ZonedDateTime deadline) {
-        this.deadline = deadline;
-    }
-
     public String getAdditionalComment() {
         return additionalComment;
     }
 
-    void setAdditionalComment(String additionalComment) {
-        this.additionalComment = additionalComment;
+    @JsonPOJOBuilder
+    public static class Builder {
+
+        private int id;
+        @NotNull
+        private String description;
+        private boolean done;
+        private ZonedDateTime deadline;
+        private String additionalComment;
+
+        private Builder() {}
+
+        public Builder id(int id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder description(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder done(boolean done) {
+            this.done = done;
+            return this;
+        }
+
+        public Builder deadline(ZonedDateTime deadline) {
+            this.deadline = deadline;
+            return this;
+        }
+
+        public Builder additionalComment(String additionalComment) {
+            this.additionalComment = additionalComment;
+            return this;
+        }
+
+        public TaskDto build() {
+            return new TaskDto(this);
+        }
     }
 }

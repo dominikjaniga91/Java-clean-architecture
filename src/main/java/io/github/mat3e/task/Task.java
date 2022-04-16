@@ -1,18 +1,25 @@
 package io.github.mat3e.task;
 
-import org.springframework.data.annotation.PersistenceConstructor;
+import static io.github.mat3e.task.TaskDto.builder;
+import static javax.persistence.GenerationType.IDENTITY;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
-import static javax.persistence.GenerationType.IDENTITY;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.springframework.data.annotation.PersistenceConstructor;
 
 import io.github.mat3e.project.Project;
 
 @Entity
 @Table(name = "tasks")
-public class Task {
+class Task {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private int id;
@@ -30,10 +37,19 @@ public class Task {
     public Task() {
     }
 
-    public Task(@NotNull String description, ZonedDateTime deadline, Project project) {
+    Task(@NotNull String description, ZonedDateTime deadline, Project project) {
         this.description = description;
         this.deadline = deadline;
         this.project = project;
+    }
+
+    TaskDto convertToDto() {
+        return builder().id(this.id)
+                .description(this.description)
+                .done(this.done)
+                .deadline(this.deadline)
+                .additionalComment(this.additionalComment)
+                .build();
     }
 
     int getId() {
@@ -52,7 +68,7 @@ public class Task {
         this.description = description;
     }
 
-    public boolean isDone() {
+    boolean isDone() {
         return done;
     }
 
