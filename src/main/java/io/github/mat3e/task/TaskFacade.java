@@ -42,10 +42,6 @@ public class TaskFacade {
         return persistedTasks.stream().map(Task::convertToDto).collect(toList());
     }
 
-    public boolean areUndoneTasksWithProjectId(int projectId) {
-        return this.taskQueryRepository.existsByDoneIsFalseAndProject_Id(projectId);
-    }
-
     TaskDto save(TaskDto toSave) {
 
         Task foundTask = taskRepository.findById(toSave.getId())
