@@ -16,12 +16,16 @@ public class TaskDto {
     private final ZonedDateTime deadline;
     private final String additionalComment;
 
-    private TaskDto(Builder builder) {
+    private TaskDto(final Builder builder) {
         this.id = builder.id;
         this.description = builder.description;
         this.done = builder.done;
         this.deadline = builder.deadline;
         this.additionalComment = builder.additionalComment;
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     public Builder toBuilder() {
@@ -35,9 +39,6 @@ public class TaskDto {
 
     public int getId() {
         return this.id;
-    }
-    public static Builder builder() {
-        return new Builder();
     }
 
     public String getDescription() {
@@ -56,7 +57,7 @@ public class TaskDto {
         return additionalComment;
     }
 
-    @JsonPOJOBuilder
+    @JsonPOJOBuilder(withPrefix = "")
     public static class Builder {
 
         private int id;

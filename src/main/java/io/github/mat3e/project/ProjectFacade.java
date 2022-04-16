@@ -13,6 +13,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Service;
 
+import io.github.mat3e.project.query.SimpleProjectQueryDto;
 import io.github.mat3e.task.TaskDto;
 import io.github.mat3e.task.TaskFacade;
 
@@ -112,7 +113,7 @@ class ProjectFacade {
                                             .description(step.getDescription())
                                             .deadline(projectDeadline.plusDays(step.getDaysToProjectDeadline()))
                                             .build()).collect(toList());
-                            return taskFacade.saveAll(collect, project);
+                            return taskFacade.saveAll(collect, new SimpleProjectQueryDto(projectId, project.getName()));
                         }
                 ).orElseThrow(() -> new IllegalArgumentException("No project found with id: " + projectId));
     }

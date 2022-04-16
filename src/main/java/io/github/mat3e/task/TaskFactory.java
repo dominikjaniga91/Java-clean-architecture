@@ -2,7 +2,7 @@ package io.github.mat3e.task;
 
 import org.springframework.stereotype.Service;
 
-import io.github.mat3e.project.Project;
+import io.github.mat3e.project.query.SimpleProjectQueryDto;
 
 /**
  * @author Dominik_Janiga
@@ -10,7 +10,7 @@ import io.github.mat3e.project.Project;
 @Service
 class TaskFactory {
 
-    Task from(TaskDto taskDto, Project project) {
+    Task from(TaskDto taskDto, SimpleProjectQueryDto project) {
         Task task = new Task(taskDto.getDescription(), taskDto.getDeadline(), project);
         task.setId(taskDto.getId());
         task.setDone(taskDto.isDone());

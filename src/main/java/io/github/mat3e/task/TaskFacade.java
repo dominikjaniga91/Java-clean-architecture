@@ -1,16 +1,16 @@
 package io.github.mat3e.task;
 
-import org.springframework.stereotype.Service;
+import static java.util.stream.Collectors.toList;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.stream.Collectors.toList;
-
 import javax.annotation.PostConstruct;
 
-import io.github.mat3e.project.Project;
+import org.springframework.stereotype.Service;
+
+import io.github.mat3e.project.query.SimpleProjectQueryDto;
 
 @Service
 public class TaskFacade {
@@ -30,7 +30,7 @@ public class TaskFacade {
         }
     }
 
-    public List<TaskDto> saveAll(final List<TaskDto> taskDtos, Project project) {
+    public List<TaskDto> saveAll(final List<TaskDto> taskDtos, SimpleProjectQueryDto project) {
 
         List<Task> tasks = taskDtos.stream().map(taskDto -> taskFactory.from(taskDto, project)).collect(toList());
         List<Task> persistedTasks = taskRepository.saveAll(tasks);
