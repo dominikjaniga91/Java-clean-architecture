@@ -1,4 +1,4 @@
-package io.github.mat3e.entity;
+package io.github.mat3e.task;
 
 import org.springframework.data.annotation.PersistenceConstructor;
 
@@ -7,6 +7,8 @@ import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 import static javax.persistence.GenerationType.IDENTITY;
+
+import io.github.mat3e.project.Project;
 
 @Entity
 @Table(name = "tasks")
@@ -34,7 +36,7 @@ public class Task {
         this.project = project;
     }
 
-    public int getId() {
+    int getId() {
         return id;
     }
 
@@ -42,11 +44,11 @@ public class Task {
         this.id = id;
     }
 
-    public String getDescription() {
+    String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    void setDescription(String description) {
         this.description = description;
     }
 
@@ -54,35 +56,35 @@ public class Task {
         return done;
     }
 
-    public void setDone(boolean done) {
+    void setDone(boolean done) {
         this.done = done;
     }
 
-    public ZonedDateTime getDeadline() {
+    ZonedDateTime getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(ZonedDateTime deadline) {
+    void setDeadline(ZonedDateTime deadline) {
         this.deadline = deadline;
     }
 
-    public int getChangesCount() {
+    int getChangesCount() {
         return changesCount;
     }
 
-    public void setChangesCount(int changesCount) {
+    void setChangesCount(int changesCount) {
         this.changesCount = changesCount;
     }
 
-    public String getAdditionalComment() {
+    String getAdditionalComment() {
         return additionalComment;
     }
 
-    public void setAdditionalComment(String additionalComment) {
+    void setAdditionalComment(String additionalComment) {
         this.additionalComment = additionalComment;
     }
 
-    public Project getProject() {
+    Project getProject() {
         return project;
     }
 

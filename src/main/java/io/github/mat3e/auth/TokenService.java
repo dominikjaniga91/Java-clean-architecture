@@ -1,6 +1,6 @@
-package io.github.mat3e.service;
+package io.github.mat3e.auth;
 
-import io.github.mat3e.configuration.JwtConfigurationProperties;
+import io.github.mat3e.auth.JwtConfigurationProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -13,18 +13,18 @@ import java.util.Date;
 import java.util.Map;
 
 @Service
-public class TokenService {
+class TokenService {
     private final JwtConfigurationProperties properties;
 
     TokenService(JwtConfigurationProperties properties) {
         this.properties = properties;
     }
 
-    public String getUsernameFromToken(String token) {
+    String getUsernameFromToken(String token) {
         return getAllClaimsFromToken(token).getSubject();
     }
 
-    public String generateNewToken(UserDetails userDetails) {
+    String generateNewToken(UserDetails userDetails) {
         Map<String, Object> claims = Map.of(); // e.g. roles
         return Jwts.builder()
                 .setClaims(claims)
@@ -35,7 +35,7 @@ public class TokenService {
                 .compact();
     }
 
-    public boolean isValidForUser(String token, UserDetails userDetails) {
+    boolean isValidForUser(String token, UserDetails userDetails) {
         String username = getUsernameFromToken(token);
         return !isTokenExpired(token) && username.equals(userDetails.getUsername());
     }

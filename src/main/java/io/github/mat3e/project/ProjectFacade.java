@@ -1,12 +1,8 @@
-package io.github.mat3e.service;
+package io.github.mat3e.project;
 
-import io.github.mat3e.dto.TaskDto;
-import io.github.mat3e.entity.Project;
-import io.github.mat3e.entity.ProjectStep;
-import io.github.mat3e.entity.Task;
-import io.github.mat3e.repository.ProjectRepository;
-import io.github.mat3e.repository.ProjectStepRepository;
-import io.github.mat3e.repository.TaskRepository;
+import io.github.mat3e.task.TaskDto;
+import io.github.mat3e.task.Task;
+import io.github.mat3e.task.TaskRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
@@ -18,19 +14,33 @@ import java.util.Set;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
+import javax.annotation.PostConstruct;
+
 @Service
-public class ProjectService {
+class ProjectFacade {
     private final ProjectRepository projectRepository;
     private final ProjectStepRepository projectStepRepository;
     private final TaskRepository taskRepository;
 
-    ProjectService(ProjectRepository projectRepository, ProjectStepRepository projectStepRepository, TaskRepository taskRepository) {
+    ProjectFacade(ProjectRepository projectRepository, ProjectStepRepository projectStepRepository, TaskRepository taskRepository) {
         this.projectRepository = projectRepository;
         this.projectStepRepository = projectStepRepository;
         this.taskRepository = taskRepository;
     }
 
-    public Project save(Project toSave) {
+    @PostConstruct
+    void init() {
+        if (projectRepository.count() == 0) {
+            var project = new Project();
+            project.setName("Example project");
+            project.addStep(new ProjectStep("First", -3, project));
+            project.addStep(new ProjectStep("Second", -2, project));
+            project.addStep(new ProjectStep("Third", 0, project));
+            projectRepository.save(project);
+        }
+    }
+
+    Project save(Project toSave) {
         if (toSave.getId() != 0) {
             return saveWithId(toSave);
         }
@@ -84,15 +94,15 @@ public class ProjectService {
                 });
     }
 
-    public List<Project> list() {
+    List<Project> list() {
         return projectRepository.findAll();
     }
 
-    public Optional<Project> get(int id) {
+    Optional<Project> get(int id) {
         return projectRepository.findById(id);
     }
 
-    public List<TaskDto> createTasks(int projectId, ZonedDateTime projectDeadline) {
+    List<TaskDto> createTasks(int projectId, ZonedDateTime projectDeadline) {
         if (taskRepository.findAllByProject_Id(projectId).stream().anyMatch(task -> !task.isDone())) {
             throw new IllegalStateException("There are still some undone tasks from a previous project instance!");
         }

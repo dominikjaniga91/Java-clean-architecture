@@ -1,4 +1,4 @@
-package io.github.mat3e.entity;
+package io.github.mat3e.project;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "project_steps")
-public class ProjectStep {
+class ProjectStep {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private int id;
@@ -32,7 +32,7 @@ public class ProjectStep {
     public ProjectStep() {
     }
 
-    public ProjectStep(@NotNull String description, int daysToProjectDeadline, Project project) {
+    ProjectStep(@NotNull String description, int daysToProjectDeadline, Project project) {
         this.description = description;
         this.daysToProjectDeadline = daysToProjectDeadline;
         this.project = project;
@@ -50,7 +50,7 @@ public class ProjectStep {
         return description;
     }
 
-    public void setDescription(String description) {
+    void setDescription(String description) {
         this.description = description;
     }
 
@@ -58,7 +58,7 @@ public class ProjectStep {
         return daysToProjectDeadline;
     }
 
-    public void setDaysToProjectDeadline(int daysToProjectDeadline) {
+    void setDaysToProjectDeadline(int daysToProjectDeadline) {
         this.daysToProjectDeadline = daysToProjectDeadline;
     }
 
@@ -66,7 +66,7 @@ public class ProjectStep {
         return project;
     }
 
-    public void setProject(Project project) {
+    void setProject(Project project) {
         this.project = project;
     }
 }

@@ -1,6 +1,4 @@
-package io.github.mat3e.dto;
-
-import io.github.mat3e.entity.Task;
+package io.github.mat3e.task;
 
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
