@@ -1,10 +1,7 @@
 package io.github.mat3e.project;
 
-import io.github.mat3e.task.TaskDto;
-import io.github.mat3e.task.Task;
-import io.github.mat3e.task.TaskFacade;
-import io.github.mat3e.task.TaskRepository;
-import org.springframework.stereotype.Service;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 import java.time.ZonedDateTime;
 import java.util.HashSet;
@@ -12,23 +9,23 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-
 import javax.annotation.PostConstruct;
+
+import org.springframework.stereotype.Service;
+
+import io.github.mat3e.task.Task;
+import io.github.mat3e.task.TaskDto;
+import io.github.mat3e.task.TaskFacade;
 
 @Service
 class ProjectFacade {
     private final ProjectRepository projectRepository;
     private final ProjectStepRepository projectStepRepository;
-    private final TaskRepository taskRepository;
     private final TaskFacade taskFacade;
 
-    ProjectFacade(ProjectRepository projectRepository, ProjectStepRepository projectStepRepository,
-            TaskRepository taskRepository, TaskFacade taskFacade) {
+    ProjectFacade(ProjectRepository projectRepository, ProjectStepRepository projectStepRepository, TaskFacade taskFacade) {
         this.projectRepository = projectRepository;
         this.projectStepRepository = projectStepRepository;
-        this.taskRepository = taskRepository;
         this.taskFacade = taskFacade;
     }
 
@@ -110,7 +107,7 @@ class ProjectFacade {
         if (taskFacade.areUndoneTasksWithProjectId(projectId)) {
             throw new IllegalStateException("There are still some undone tasks from a previous project instance!");
         }
-        return taskRepository.saveAll(projectRepository.findById(projectId).stream()
+        List<Task> projectTasks = projectRepository.findById(projectId).stream()
                 .flatMap(project -> project.getSteps().stream()
                         .map(step -> new Task(
                                         step.getDescription(),
@@ -118,8 +115,7 @@ class ProjectFacade {
                                         project
                                 )
                         )
-                ).collect(toList())).stream()
-                .map(TaskDto::new)
-                .collect(toList());
+                ).collect(toList());
+        return taskFacade.saveAll(projectTasks);
     }
 }

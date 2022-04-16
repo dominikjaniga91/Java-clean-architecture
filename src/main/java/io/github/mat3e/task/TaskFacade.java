@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -70,5 +71,11 @@ public class TaskFacade {
 
     void delete(int id) {
         taskRepository.deleteById(id);
+    }
+
+    public List<TaskDto> saveAll(final List<Task> tasks) {
+        List<Task> persistedTasks = taskRepository.saveAll(tasks);
+
+        return persistedTasks.stream().map(TaskDto::new).collect(toList());
     }
 }
