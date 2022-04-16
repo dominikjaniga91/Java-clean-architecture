@@ -1,6 +1,12 @@
 package io.github.mat3e.project;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
 
-interface ProjectRepository extends JpaRepository<Project, Integer> {
+import org.springframework.data.repository.Repository;
+
+interface ProjectRepository extends Repository<Project, Integer> {
+
+    Project save(Project project);
+
+    Optional<Project> findById(int id);
 }

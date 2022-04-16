@@ -24,18 +24,21 @@ class ProjectFacade {
     private final ProjectStepRepository projectStepRepository;
     private final TaskFacade taskFacade;
     private final TaskQueryRepository taskQueryRepository;
+    private final ProjectQueryRepository projectQueryRepository;
 
     ProjectFacade(final ProjectRepository projectRepository, final ProjectStepRepository projectStepRepository,
-            final TaskFacade taskFacade, final TaskQueryRepository taskQueryRepository) {
+            final TaskFacade taskFacade, final TaskQueryRepository taskQueryRepository,
+            final ProjectQueryRepository projectQueryRepository) {
         this.projectRepository = projectRepository;
         this.projectStepRepository = projectStepRepository;
         this.taskFacade = taskFacade;
         this.taskQueryRepository = taskQueryRepository;
+        this.projectQueryRepository = projectQueryRepository;
     }
 
     @PostConstruct
     void init() {
-        if (projectRepository.count() == 0) {
+        if (this.projectQueryRepository.count() == 0) {
             var project = new Project();
             project.setName("Example project");
             project.addStep(new ProjectStep("First", -3, project));
@@ -54,7 +57,11 @@ class ProjectFacade {
         }
         toSave.getSteps().forEach(step -> {
             if (step.getProject() == null) {
-                step.setProject(toSave);
+                Project project = new Project();
+                project.setId(toSave.getId());
+                project.setName(toSave.getName());
+                toSave.getSteps().forEach(project::addStep);
+                step.setProject(project);
             }
         });
         return projectRepository.save(toSave);
@@ -99,13 +106,6 @@ class ProjectFacade {
                 });
     }
 
-    List<Project> list() {
-        return projectRepository.findAll();
-    }
-
-    Optional<Project> get(int id) {
-        return projectRepository.findById(id);
-    }
 
     List<TaskDto> createTasks(int projectId, ZonedDateTime projectDeadline) {
         if (taskQueryRepository.existsByDoneIsFalseAndProject_Id(projectId)) {

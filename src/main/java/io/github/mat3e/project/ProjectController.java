@@ -1,5 +1,6 @@
 package io.github.mat3e.project;
 
+import io.github.mat3e.project.dto.ProjectDto;
 import io.github.mat3e.task.dto.TaskDto;
 
 import org.springframework.http.ResponseEntity;
@@ -12,29 +13,30 @@ import java.util.List;
 @RequestMapping("/projects")
 class ProjectController {
     private final ProjectFacade projectFacade;
+    private final ProjectQueryRepository projectQueryRepository;
 
-    ProjectController(ProjectFacade projectFacade) {
+    ProjectController(final ProjectFacade projectFacade, final ProjectQueryRepository projectQueryRepository) {
         this.projectFacade = projectFacade;
+        this.projectQueryRepository = projectQueryRepository;
     }
 
     @GetMapping
-    List<Project> list() {
-        return projectFacade.list();
+    List<ProjectDto> list() {
+        return this.projectQueryRepository.findAllBy();
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<Project> get(@PathVariable int id) {
-        return projectFacade.get(id)
+    ResponseEntity<ProjectDto> get(@PathVariable int id) {
+        return this.projectQueryRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<Project> update(@PathVariable int id, @RequestBody Project toUpdate) {
+    ResponseEntity<ProjectDto> update(@PathVariable int id, @RequestBody Project toUpdate) {
         if (id != toUpdate.getId() && toUpdate.getId() != 0) {
             throw new IllegalStateException("Id in URL is different than in body: " + id + " and " + toUpdate.getId());
         }
-        toUpdate.setId(id);
         projectFacade.save(toUpdate);
         return ResponseEntity.noContent().build();
     }
