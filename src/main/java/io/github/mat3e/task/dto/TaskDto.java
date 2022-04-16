@@ -1,6 +1,7 @@
-package io.github.mat3e.task;
+package io.github.mat3e.task.dto;
 
 import java.time.ZonedDateTime;
+import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
@@ -16,12 +17,13 @@ public class TaskDto {
     private final ZonedDateTime deadline;
     private final String additionalComment;
 
-    private TaskDto(final Builder builder) {
-        this.id = builder.id;
-        this.description = builder.description;
-        this.done = builder.done;
-        this.deadline = builder.deadline;
-        this.additionalComment = builder.additionalComment;
+    public TaskDto(final int id, @NotNull final String description, final boolean done, final ZonedDateTime deadline,
+            final String additionalComment) {
+        this.id = id;
+        this.description = description;
+        this.done = done;
+        this.deadline = deadline;
+        this.additionalComment = additionalComment;
     }
 
     public static Builder builder() {
@@ -55,6 +57,25 @@ public class TaskDto {
 
     public String getAdditionalComment() {
         return additionalComment;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final TaskDto taskDto = (TaskDto) o;
+        return id == taskDto.id && done == taskDto.done && Objects.equals(description, taskDto.description)
+                && Objects.equals(deadline, taskDto.deadline) && Objects
+                .equals(additionalComment, taskDto.additionalComment);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, description, done, deadline, additionalComment);
     }
 
     @JsonPOJOBuilder(withPrefix = "")
@@ -95,7 +116,7 @@ public class TaskDto {
         }
 
         public TaskDto build() {
-            return new TaskDto(this);
+            return new TaskDto(this.id, this.description, this.done, this.deadline, this.additionalComment);
         }
     }
 }
