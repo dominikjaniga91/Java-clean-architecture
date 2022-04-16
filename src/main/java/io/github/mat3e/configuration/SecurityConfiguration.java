@@ -21,10 +21,10 @@ import org.springframework.security.web.authentication.AnonymousAuthenticationFi
 import java.util.Set;
 
 @EnableWebSecurity
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final TokenService tokenService;
 
-    public SecurityConfiguration(TokenService tokenService) {
+    SecurityConfiguration(TokenService tokenService) {
         this.tokenService = tokenService;
     }
 
@@ -49,7 +49,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
+    protected UserDetailsService userDetailsService() {
         return new InMemoryUserDetailsManager(
                 new User(
                         "user",
