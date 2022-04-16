@@ -3,6 +3,7 @@ package io.github.mat3e.task;
 import org.springframework.stereotype.Service;
 
 import io.github.mat3e.project.query.SimpleProjectQueryDto;
+import io.github.mat3e.task.dto.TaskDto;
 
 /**
  * @author Dominik_Janiga

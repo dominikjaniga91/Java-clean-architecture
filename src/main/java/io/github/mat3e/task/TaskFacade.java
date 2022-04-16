@@ -4,14 +4,13 @@ import static java.util.stream.Collectors.toList;
 
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Service;
 
 import io.github.mat3e.project.query.SimpleProjectQueryDto;
-import io.github.mat3e.task.dto.TaskWithChangesDto;
+import io.github.mat3e.task.dto.TaskDto;
 
 @Service
 public class TaskFacade {
@@ -64,13 +63,7 @@ public class TaskFacade {
     }
 
     List<TaskDto> list() {
-        return taskQueryRepository.findAll().stream()
-                .map(Task::convertToDto)
-                .collect(toList());
-    }
-
-    Optional<TaskDto> get(int id) {
-        return taskRepository.findById(id).map(Task::convertToDto);
+        return taskQueryRepository.findAllBy();
     }
 
     void delete(int id) {

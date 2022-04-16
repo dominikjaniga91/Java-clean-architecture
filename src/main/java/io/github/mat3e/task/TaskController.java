@@ -7,6 +7,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Set;
 
+import io.github.mat3e.task.dto.TaskDto;
 import io.github.mat3e.task.dto.TaskWithChangesDto;
 
 @RestController
@@ -22,7 +23,7 @@ class TaskController {
 
     @GetMapping
     List<TaskDto> list() {
-        return taskFacade.list();
+        return this.taskQueryRepository.findAllBy();
     }
 
     @GetMapping(params = "changes")
@@ -32,7 +33,7 @@ class TaskController {
 
     @GetMapping("/{id}")
     ResponseEntity<TaskDto> get(@PathVariable int id) {
-        return taskFacade.get(id)
+        return taskQueryRepository.findDtoById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

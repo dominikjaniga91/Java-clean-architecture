@@ -1,6 +1,6 @@
 package io.github.mat3e.task;
 
-import static io.github.mat3e.task.TaskDto.builder;
+import static io.github.mat3e.task.dto.TaskDto.builder;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.time.ZonedDateTime;
@@ -16,6 +16,7 @@ import javax.validation.constraints.NotNull;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 import io.github.mat3e.project.query.SimpleProjectQueryDto;
+import io.github.mat3e.task.dto.TaskDto;
 
 @Entity
 @Table(name = "tasks")
