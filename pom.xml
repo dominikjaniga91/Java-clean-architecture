@@ -13,10 +13,16 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>java-clean-architecture</name>
     <description>Example project for a Clean Architecture course.</description>
-
+    <packaging>pom</packaging>
     <properties>
         <java.version>11</java.version>
     </properties>
+    <modules>
+        <module>app</module>
+        <module>adapters</module>
+        <module>domain</module>
+        <module>monolith</module>
+    </modules>
 
     <dependencies>
         <dependency>
